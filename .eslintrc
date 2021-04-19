@@ -1,0 +1,9 @@
+{
+  "extends": [
+    "@ecomfe/eslint-config"
+  ],
+  "rules": {
+    "indent": ["error", 2],
+    "no-console": 0
+  }
+}
