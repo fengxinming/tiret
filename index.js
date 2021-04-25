@@ -1,9 +1,14 @@
 const Benchmark = require('benchmark');
-const {join, isAbsolute} = require('path');
+const { join, isAbsolute } = require('path');
 const globby = require('globby');
 
+function print(msg) {
+  // eslint-disable-next-line no-console
+  console.log(msg);
+}
+
 function run(input) {
-  console.log('======== Benchmark start ========\n');
+  print('======== Benchmark start ========\n');
 
   const cwd = process.cwd();
   const files = globby.sync(input);
@@ -12,21 +17,21 @@ function run(input) {
       file = join(cwd, file);
     }
     const tests = require(file);
-    const suite = new Benchmark.Suite({minSamples: 100});
-    Object.keys(tests).forEach(key => {
+    const suite = new Benchmark.Suite({ minSamples: 100 });
+    Object.keys(tests).forEach((key) => {
       suite.add(key, tests[key]);
     });
     suite
-      .on('cycle', e => {
-        console.log(String(e.target));
+      .on('cycle', (e) => {
+        print(String(e.target));
       })
-      .on('complete', e => {
-        console.log(`The fastest is ${e.currentTarget.filter('fastest').map('name')}\n`);
+      .on('complete', (e) => {
+        print(`The fastest is ${e.currentTarget.filter('fastest').map('name')}\n`);
       })
       .run();
   }
 
-  console.log('======== Benchmark end ========');
+  print('======== Benchmark end ========');
 
 }
 

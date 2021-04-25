@@ -19,5 +19,5 @@ run('./test/*.test.js');
 ```
 
 ```ts
-export default function run(input: string | string[]): void
+export default function(input: string | string[]): void
 ```
