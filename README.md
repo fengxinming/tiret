@@ -26,3 +26,34 @@ run('./test/*.test.js');
 ```ts
 export default function(input: string | string[]): void
 ```
+
+### *.test.js
+
+> example
+
+```js
+function max(a, b) {
+  return a > b ? a : b;
+}
+
+const array = Array.from({ length: 1000 });
+for (let i = 0; i < array.length; i++) {
+  array[i] = Math.round(Math.random() * 10);
+}
+
+// 测试 max
+module.exports = {
+  '【Math.max】': function () {
+    for (let i = 0, len = array.length - 1; i < len; i += 2) {
+      Math.max(array[i], array[i + 1]);
+    }
+  },
+
+  '【max】': function () {
+    for (let i = 0, len = array.length - 1; i < len; i += 2) {
+      max(array[i], array[i + 1]);
+    }
+  },
+};
+
+```
