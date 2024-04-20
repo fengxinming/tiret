@@ -13,7 +13,7 @@
 
 ```bash
 $ npm i tiret -g
-$ tiret -i ./test/*.test.js
+$ tiret ./test/*.test.js
 ```
 
 ### API

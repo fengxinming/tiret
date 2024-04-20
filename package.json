@@ -1,13 +1,21 @@
 {
   "name": "tiret",
   "description": "benchmark runner",
-  "version": "1.0.1",
-  "main": "index.js",
+  "version": "2.0.0",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
   "bin": {
-    "tiret": "./bin/index.js"
+    "tiret": "./dist/bin.mjs"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "deps": "npm run clean && pnpm i",
+    "clean": "rm -rf node_modules",
+    "build": "vite build",
+    "test": "npm run build && node ./test/index.mjs",
+    "eslint": "eslint --ext .js,.mjs,.jsx,.ts,.tsx --fix --ignore-path .eslintignore ./",
+    "prepare": "husky",
+    "prepublishOnly": "npm run build"
   },
   "repository": {
     "type": "git",
@@ -26,30 +34,26 @@
   "homepage": "https://github.com/fengxinming/tiret#readme",
   "dependencies": {
     "benchmark": "^2.1.4",
-    "commander": "^7.2.0",
-    "globby": "^11.0.3"
+    "cac": "^6.7.14",
+    "figlet": "^1.7.0",
+    "globby": "^13.2.2",
+    "ora": "^8.0.1",
+    "tslib": "^2.6.2"
   },
   "devDependencies": {
-    "@babel/core": "^7.13.15",
-    "@babel/eslint-parser": "^7.13.14",
-    "@babel/eslint-plugin": "^7.13.15",
-    "@babel/preset-env": "^7.13.15",
-    "@commitlint/cli": "^11.0.0",
-    "chalk": "^4.1.0",
-    "eslint": "^7.24.0",
-    "eslint-config-fe": "^1.0.0",
-    "husky": "^4.3.0",
-    "lint-staged": "^10.4.2"
+    "@commitlint/cli": "^19.2.0",
+    "@commitlint/config-conventional": "^19.1.0",
+    "@rollup/plugin-typescript": "^11.1.6",
+    "@types/node": "^20.12.7",
+    "eslint": "^8.57.0",
+    "eslint-config-fe": "^2.1.2",
+    "eslint-plugin-simple-import-sort": "^12.1.0",
+    "husky": "^9.0.11",
+    "lint-staged": "^15.2.2",
+    "vite": "^5.2.9",
+    "vite-plugin-external": "^4.3.1"
   },
-  "husky": {
-    "hooks": {
-      "pre-commit": "lint-staged"
-    }
-  },
-  "lint-staged": {
-    "*.js": [
-      "eslint --fix",
-      "git add"
-    ]
-  }
+  "files": [
+    "dist"
+  ]
 }

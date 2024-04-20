@@ -1,1 +1,0 @@
-export default function run(input: string | string[]): void
