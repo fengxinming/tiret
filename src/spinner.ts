@@ -34,13 +34,13 @@ export class Spinner {
     this._lastMsg = null;
   }
 
-  fail(text) {
-    this.spinner.fail(text || this._lastMsg);
+  fail(text?: string) {
+    this.spinner.fail(text || this._lastMsg || '');
     this._lastMsg = null;
   }
 
-  done(text) {
-    this.spinner.succeed(text || this._lastMsg);
+  done(text?: string) {
+    this.spinner.succeed(text || this._lastMsg || '');
     this._lastMsg = null;
   }
 }

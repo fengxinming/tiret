@@ -19,12 +19,35 @@ $ tiret ./test/*.test.js
 ### API
 
 ```js
-const run = require('tiret');
-run('./test/*.test.js');
+import { runFiles } from 'tiret';
+runFiles('./test/*.test.js');
 ```
 
-```ts
-export default function(input: string | string[]): void
+
+```js
+import { run } from 'tiret';
+function min(a, b) {
+  return a < b ? a : b;
+}
+
+const array = Array.from({ length: 1000 });
+for (let i = 0; i < array.length; i++) {
+  array[i] = Math.round(Math.random() * 10);
+}
+
+run({
+  '【Math.min】'() {
+    for (let i = 0, len = array.length - 1; i < len; i += 2) {
+      Math.min(array[i], array[i + 1]);
+    }
+  },
+
+  '【min】'() {
+    for (let i = 0, len = array.length - 1; i < len; i += 2) {
+      min(array[i], array[i + 1]);
+    }
+  }
+});
 ```
 
 ### *.test.js
