@@ -1,7 +1,7 @@
 {
   "name": "tiret",
-  "description": "benchmark runner",
-  "version": "2.1.0",
+  "description": "benchmark runner.",
+  "version": "2.1.1",
   "main": "./dist/index.js",
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -23,8 +23,7 @@
   },
   "keywords": [
     "benchmark",
-    "runner",
-    "tiret"
+    "runner"
   ],
   "author": "Jesse Feng <fxm0016@126.com>",
   "license": "MIT",

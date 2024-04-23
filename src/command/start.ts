@@ -24,7 +24,8 @@ export default function start(cli: CAC) {
     .action(async (input: string[]) => {
       const start = Date.now();
 
-      const files = await globby(input, { cwd: process.cwd(), absolute: true });
+      const cwd = process.cwd();
+      const files = await globby(input, { cwd, absolute: true });
 
       for (const file of files) {
         const tasks = file.endsWith('.mjs') ? (await import(file)).default : require(file);

@@ -2,7 +2,7 @@ const len = 1000;
 
 // 测试 【plus】
 export default [{
-  '【plus】'() {
+  '【+=】'() {
     let str = '';
     for (let i = 0; i < len; i += 2) {
       // eslint-disable-next-line no-unused-vars
@@ -10,7 +10,7 @@ export default [{
     }
   },
 
-  '【push】'() {
+  '【join】'() {
     const array = [];
     for (let i = 0; i < len; i += 2) {
       array.push(i);

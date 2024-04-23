@@ -27,9 +27,11 @@ export interface TaskGroup {
 export interface Options {
   async?: boolean;
   queued?: boolean;
+  before?: () => void;
+  done?: (msg?: string) => void;
 }
 
 export interface Options2 extends Options {
+  cwd?: string;
   globby?: GlobbyOptions;
-  onRead?: (msg: string) => void;
 }

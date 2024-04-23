@@ -20,7 +20,12 @@ $ tiret ./test/*.test.js
 
 ```js
 import { runFiles } from 'tiret';
-runFiles('./test/*.test.js');
+runFiles('./test/*.test.mjs', {
+  async: true,
+  done(msg) {
+    console.info(msg);
+  }
+});
 ```
 
 
@@ -50,7 +55,7 @@ run({
 });
 ```
 
-### *.test.js
+### *.test.mjs
 
 > example
 
@@ -65,18 +70,17 @@ for (let i = 0; i < array.length; i++) {
 }
 
 // 测试 max
-module.exports = {
-  '【Math.max】': function () {
+export default {
+  '【Math.max】'() {
     for (let i = 0, len = array.length - 1; i < len; i += 2) {
       Math.max(array[i], array[i + 1]);
     }
   },
 
-  '【max】': function () {
+  '【max】'() {
     for (let i = 0, len = array.length - 1; i < len; i += 2) {
       max(array[i], array[i + 1]);
     }
-  },
+  }
 };
-
 ```
