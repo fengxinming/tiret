@@ -1,3 +1,8 @@
-import run from '../dist/index.mjs';
+import { runFiles } from '../dist/index.mjs';
 
-run('test/*.test.mjs');
+runFiles('./test/*.test.mjs', {
+  async: true,
+  done(msg) {
+    console.info(msg);
+  }
+});

@@ -20,7 +20,12 @@ $ tiret ./test/*.test.js
 
 ```js
 import { runFiles } from 'tiret';
-runFiles('./test/*.test.mjs');
+runFiles('./test/*.test.mjs', {
+  async: true,
+  done(msg) {
+    console.info(msg);
+  }
+});
 ```
 
 

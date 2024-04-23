@@ -10,45 +10,49 @@ export * from './typings';
 
 const require = createRequire(import.meta.url);
 
-export async function run(tasks: TaskGroup, opts?: Options): Promise<string> {
+function noop(): any {}
+
+export async function run(tasks: TaskGroup, opts: Options = {}): Promise<string> {
+  const { before = noop, done = noop } = opts;
+
   const suite = new benchmark.Suite();
   Object.entries(tasks).forEach(([name, task]) => {
     suite.add(name, task);
   });
 
-  const messages: string[] = [];
-  suite
-    .on('cycle', (event) => {
-      messages.push(String(event.target));
-    });
-
   return new Promise((resolve, reject) => {
+    let msg = '';
     suite
+      .on('cycle', (event) => {
+        msg += String(event.target) + EOL;
+      })
       .on('complete', function () {
-        messages.push(`Fastest is ${this.filter('fastest').map('name')}`);
-        resolve(messages.join(EOL));
+        msg += `Fastest is ${this.filter('fastest').map('name')}${EOL}`;
+        done(msg);
+        resolve(msg);
       })
       .on('error', (evt) => {
         reject(evt);
-      })
-      .run(opts);
+      });
+    before();
+    suite.run(opts);
   });
 }
 
 
 export async function runFiles(input: string | string[], opts: Options2 = {}): Promise<void> {
-  const files = await globby(input, { cwd: process.cwd(), absolute: true, ...opts.globby });
+  const { cwd, globby: globbyOptions, ...runOpts } = opts;
+  const files = await globby(input, { cwd: cwd || process.cwd(), absolute: true, ...opts.globby });
 
-  const onRead = opts.onRead || (() => {});
   for (const file of files) {
     const tasks = file.endsWith('.mjs') ? (await import(file)).default : require(file);
     if (Array.isArray(tasks)) {
       for (const task of tasks) {
-        onRead(await run(task, opts));
+        await run(task, runOpts);
       }
     }
     else {
-      onRead(await run(tasks, opts));
+      await run(tasks, runOpts);
     }
   }
 }
