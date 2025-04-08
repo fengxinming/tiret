@@ -1,31 +1,41 @@
-import {
-  readFileSync
-} from 'node:fs';
-import { dirname, isAbsolute, join } from 'node:path';
-import { fileURLToPath } from 'node:url';
+import { readFileSync } from 'node:fs';
+import { unlink, writeFile } from 'node:fs/promises';
+import { createRequire } from 'node:module';
+import { join, parse } from 'node:path';
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
-export const rootPath = join(__dirname, '..');
+import { transformWithEsbuild } from 'vite';
 
-/**
- * 读取文件
- */
-export function readFile(pth: string, cwd?: string): string {
-  if (!cwd) {
-    cwd = rootPath;
+import { TaskGroup } from './typings';
+
+export * from './typings';
+
+const __require = createRequire(import.meta.url);
+
+export async function getTask(filename: string): Promise<TaskGroup | TaskGroup[] | undefined> {
+  // eslint-disable-next-line prefer-const
+  let { ext, dir, name } = parse(filename);
+  const isTs = ext === '.ts' || ext === '.mts';
+  if (isTs) {
+    const { code } = await transformWithEsbuild(readFileSync(filename, 'utf-8'), filename, {
+      loader: 'ts',
+      target: 'esnext'
+    });
+    filename = join(dir, `${name}-${Math.random().toString(36).slice(2)}.mjs`);
+    ext = '.mjs';
+    await writeFile(filename, code);
   }
-  if (!isAbsolute(pth)) {
-    pth = join(cwd, pth);
+
+  let config: TaskGroup | TaskGroup[] | undefined;
+  switch (ext) {
+    case '.js':
+      config = __require(filename);
+      break;
+    case '.mjs':
+      config = (await import(filename)).default;
+      if (isTs) {
+        await unlink(filename);
+      }
+      break;
   }
-  return readFileSync(pth, 'utf-8');
+  return config;
 }
-
-/**
- * 读取json文件
- */
-export function readJsonFile(relativePath: string, cwd?: string): Record<string, any> {
-  return JSON.parse(readFile(relativePath, cwd));
-}
-
-export const rootPkg = readJsonFile('package.json');

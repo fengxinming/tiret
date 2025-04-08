@@ -1,7 +1,7 @@
 {
   "name": "tiret",
   "description": "Lightweight performance testing tool supporting configuration files for defining and executing benchmark tests.",
-  "version": "3.0.0",
+  "version": "3.0.1",
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
