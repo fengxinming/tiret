@@ -1,7 +1,7 @@
 import cac from 'cac';
 import figlet from 'figlet';
 
-import { rootPkg } from '../util';
+import { name, version } from '../../package.json';
 import start from './start';
 
 function banner(msg, opts) {
@@ -16,7 +16,7 @@ function banner(msg, opts) {
 }
 
 // 大标题
-banner(rootPkg.name, {
+banner(name, {
   font: 'ANSI Shadow'
 });
 
@@ -25,7 +25,7 @@ const cli = cac();
 
 start(cli);
 
-cli.version(rootPkg.version).help();
+cli.version(version).help();
 
 cli.parse(process.argv);
 
