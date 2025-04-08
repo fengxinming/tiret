@@ -1,4 +1,4 @@
-import { Options as GlobbyOptions } from 'globby';
+import { GlobOptions } from 'tinyglobby';
 
 export interface TaskEvent {
   type: string;
@@ -24,14 +24,14 @@ export interface TaskGroup {
   [name: string]: Task;
 }
 
-export interface Options {
+export interface RunOptions {
   async?: boolean;
   queued?: boolean;
   before?: () => void;
   done?: (msg?: string) => void;
 }
 
-export interface Options2 extends Options {
+export interface RunFilesOptions extends RunOptions {
   cwd?: string;
-  globby?: GlobbyOptions;
+  glob?: GlobOptions;
 }
