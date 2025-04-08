@@ -2,7 +2,7 @@ function min(a, b) {
   return a < b ? a : b;
 }
 
-const array = Array.from({ length: 1000 });
+const array: number[] = Array.from({ length: 1000 });
 for (let i = 0; i < array.length; i++) {
   array[i] = Math.round(Math.random() * 10);
 }

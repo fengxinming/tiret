@@ -1,7 +1,7 @@
 import { createRequire } from 'node:module';
 
 import { CAC } from 'cac';
-import { globby } from 'globby';
+import { glob } from 'tinyglobby';
 
 import { run } from '../index';
 import { spinner } from '../spinner';
@@ -25,7 +25,7 @@ export default function start(cli: CAC) {
       const start = Date.now();
 
       const cwd = process.cwd();
-      const files = await globby(input, { cwd, absolute: true });
+      const files = await glob(input, { cwd, absolute: true });
 
       for (const file of files) {
         const tasks = file.endsWith('.mjs') ? (await import(file)).default : require(file);

@@ -1,18 +1,22 @@
+import { readFileSync } from 'node:fs';
+import { unlink, writeFile } from 'node:fs/promises';
 import { createRequire } from 'node:module';
 import { EOL } from 'node:os';
+import { join, parse } from 'node:path';
 
 import benchmark from 'benchmark';
-import { globby } from 'globby';
+import { glob } from 'tinyglobby';
+import { transformWithEsbuild } from 'vite';
 
-import { Options, Options2, TaskGroup } from './typings';
+import { RunFilesOptions, RunOptions, TaskGroup } from './typings';
 
 export * from './typings';
 
-const require = createRequire(import.meta.url);
+const __require = createRequire(import.meta.url);
 
 function noop(): any {}
 
-export async function run(tasks: TaskGroup, opts: Options = {}): Promise<string> {
+export async function run(tasks: TaskGroup, opts: RunOptions = {}): Promise<string> {
   const { before = noop, done = noop } = opts;
 
   const suite = new benchmark.Suite();
@@ -39,19 +43,47 @@ export async function run(tasks: TaskGroup, opts: Options = {}): Promise<string>
   });
 }
 
+async function getTask(filename: string): Promise<TaskGroup | TaskGroup[] | undefined> {
+  // eslint-disable-next-line prefer-const
+  let { ext, dir, name } = parse(filename);
+  const isTs = ext === '.ts' || ext === '.mts';
+  if (isTs) {
+    const { code } = await transformWithEsbuild(readFileSync(filename, 'utf-8'), filename, {
+      loader: 'ts',
+      target: 'esnext'
+    });
+    filename = join(dir, `${name}-${Math.random().toString(36).slice(2)}.mjs`);
+    ext = '.mjs';
+    await writeFile(filename, code);
+  }
 
-export async function runFiles(input: string | string[], opts: Options2 = {}): Promise<void> {
-  const { cwd, globby: globbyOptions, ...runOpts } = opts;
-  const files = await globby(input, { cwd: cwd || process.cwd(), absolute: true, ...opts.globby });
+  let config: TaskGroup | TaskGroup[] | undefined;
+  switch (ext) {
+    case '.js':
+      config = __require(filename);
+      break;
+    case '.mjs':
+      config = (await import(filename)).default;
+      if (isTs) {
+        await unlink(filename);
+      }
+      break;
+  }
+  return config;
+}
+
+export async function runFiles(input: string | string[], opts: RunFilesOptions = {}): Promise<void> {
+  const { cwd, glob: globOptions, ...runOpts } = opts;
+  const files = await glob(input, Object.assign({ cwd: cwd || process.cwd(), absolute: true, globOptions }));
 
   for (const file of files) {
-    const tasks = file.endsWith('.mjs') ? (await import(file)).default : require(file);
+    const tasks = await getTask(file);
     if (Array.isArray(tasks)) {
       for (const task of tasks) {
         await run(task, runOpts);
       }
     }
-    else {
+    else if (tasks) {
       await run(tasks, runOpts);
     }
   }
